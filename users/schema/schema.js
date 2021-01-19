@@ -1,5 +1,5 @@
 const graphql = require("graphql");
-const _ = require("lodash");
+const axios = require("axios");
 
 const {
     GraphQLObjectType,
@@ -7,11 +7,6 @@ const {
     GraphQLString,
     GraphQLSchema
 } = graphql;
-
-const users = [
-    { id: '23', firstName: 'James', age: 34},
-    { id: '26', firstName: 'Malina', age: 23}
-];
 
 
 const UserType = new GraphQLObjectType({
@@ -30,7 +25,8 @@ const RootQuery = new GraphQLObjectType({
             type: UserType,
             args: { id: { type: GraphQLString } },
             resolve(parentValue, args) {
-                return _.find(users, { id: args.id });
+               return axios.get(`http://localhost:3000/users/${args.id}`)
+               .then(res => res.data); //have to return res.data because graphql doesnt know axios returns the data under the data property
             }
         }
     }
